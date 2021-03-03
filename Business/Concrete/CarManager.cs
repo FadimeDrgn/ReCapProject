@@ -19,10 +19,10 @@ namespace Business.Concrete
 
         public void Add(Car car)
         {
-            if (car.CarName.Length >= 2 && car.DailyPrice > 0)
+            if (car.Description.Length >= 2 && car.DailyPrice > 0)
             {
                 _carDal.Add(car);
-                Console.WriteLine(car.CarName + " araba eklendi.");
+                Console.WriteLine(car.Description + " araba eklendi.");
             }
             else
             {
@@ -32,7 +32,7 @@ namespace Business.Concrete
 
         public void Delete(Car car)
         {
-            throw new NotImplementedException();
+            _carDal.Add(car);
         }
 
         public List<Car> GetAll()
@@ -52,7 +52,8 @@ namespace Business.Concrete
 
         public void Update(Car car)
         {
-            throw new NotImplementedException();
+            _carDal.Update(car);
         }
+
     }
 }
