@@ -1,4 +1,6 @@
 ﻿using Business.Abstract;
+using Business.Constant;
+using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using System;
@@ -17,42 +19,43 @@ namespace Business.Concrete
             _carDal = carDal;
         }
 
-        public void Add(Car car)
+        public IResult Add(Car car)
         {
-            if (car.Description.Length >= 2 && car.DailyPrice > 0)
+            if (car.Description.Length < 2 && car.DailyPrice <0)
             {
-                _carDal.Add(car);
-                Console.WriteLine(car.Description + " araba eklendi.");
+
+                return new ErrorResult("Araba ismi min 2 karakter olmalıdır.");
             }
-            else
-            {
-                Console.WriteLine("Araba ismi minimum 2 karakter olmalı ve günlük fiyatı da 0'dan büyüK olmalıdır. ");
-            }
+            _carDal.Add(car);
+
+            return new SuccessResult(Messages.CarAdded);
         }
 
-        public void Delete(Car car)
+        public IResult Delete(Car car)
         {
             _carDal.Add(car);
+            return new Result(true,"Araba silindi.");
         }
 
-        public List<Car> GetAll()
+        public IDataResult<List<Car>> GetAll()
         {
-            return _carDal.GetAll();
+            return new DataResult<List<Car>>(_carDal.GetAll(),true,"Ürünler listelendi.");
         }
 
-        public List<Car> GetCarsByBrandId(int id)
+        public IDataResult<List<Car>> GetCarsByBrandId(int id)
         {
-            return _carDal.GetAll(p => p.BrandId == id);
+            return new SuccessDataResult<List<Car>>(_carDal.GetAll(p => p.BrandId == id));
         }
 
-        public List<Car> GetCarsByColorId(int id)
+        public IDataResult<List<Car>> GetCarsByColorId(int id)
         {
-            return _carDal.GetAll(p => p.ColorId == id);
+            return new SuccessDataResult<List<Car>>(_carDal.GetAll(p => p.ColorId == id));
         }
 
-        public void Update(Car car)
+        public IResult Update(Car car)
         {
             _carDal.Update(car);
+            return new Result(true, "Araba bilgisi güncellendi.");
         }
 
     }
