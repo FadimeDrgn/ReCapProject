@@ -10,8 +10,51 @@ namespace ConsoleUI
     {
         static void Main(string[] args)
         {
-            AddTest();
+            CustomerManager customerManager1 = new CustomerManager(new EfCustomerDal());
+            customerManager1.Add(new Customer
+            {
 
+                UserId = 4,
+                CompanyName = "D Company"
+            });
+            //UserAddTest();
+            //CustomerAddTest();
+
+            //AddTest();
+            //CarManager carManager1 = new CarManager(new EfCarDal());
+            //carManager1.Update(new Car
+            //{
+            //    CarId = 3,
+            //    BrandId = 4,
+            //    ColorId = 2,
+            //    DailyPrice = 1000000,
+            //    Description = "Tesla Model S",
+            //    ModelYear = 2012
+            //});
+
+        }
+
+        private static void UserAddTest()
+        {
+            UserManager userManager1 = new UserManager(new EfUserDal());
+            userManager1.Add(new User
+            {
+                FirstName = "Halime",
+                LastName = "Yeşil",
+                Email = "asdfghn58@gmail.com",
+                Password = "asdfghn58"
+            });
+        }
+
+        private static void CustomerAddTest()
+        {
+            CustomerManager customerManager = new CustomerManager(new EfCustomerDal());
+            customerManager.Add(new Customer
+            {
+
+                UserId = 5,
+                CompanyName = "C Company"
+            });
         }
 
         private static void AddTest()
