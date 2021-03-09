@@ -12,7 +12,7 @@ namespace Business.Abstract
         IResult Delete(Car car);
         IResult Update(Car car);
         IDataResult<List<Car>> GetAll();
-        IDataResult<List<Car>> GetCarsByBrandId(int brandId); // hatalı Liste olamaz
-        IDataResult<List<Car>> GetCarsByColorId(int colorId); //aynı şekilde T olmalı
+        IDataResult<List<Car>> GetCarsByBrandId(int brandId);
+        IDataResult<List<Car>> GetCarsByColorId(int colorId);
     }
 }

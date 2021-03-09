@@ -33,7 +33,7 @@ namespace Business.Concrete
 
         public IResult Delete(Car car)
         {
-            _carDal.Add(car);
+            _carDal.Delete(car);
             return new Result(true,"Araba silindi.");
         }
 
