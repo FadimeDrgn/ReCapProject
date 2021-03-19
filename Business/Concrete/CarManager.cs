@@ -1,8 +1,11 @@
 ﻿using Business.Abstract;
 using Business.Constant;
+using Business.ValidationRules.FluentValidation;
+using Core.CrossCuttingConcerns.Validation;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
+using FluentValidation;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -21,11 +24,9 @@ namespace Business.Concrete
 
         public IResult Add(Car car)
         {
-            if (car.Description.Length < 2 && car.DailyPrice <0)
-            {
+            
+            ValidationTool.Validate(new CarValidator(), car);
 
-                return new ErrorResult("Araba ismi min 2 karakter olmalıdır.");
-            }
             _carDal.Add(car);
 
             return new SuccessResult(Messages.CarAdded);
