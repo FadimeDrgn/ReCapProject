@@ -10,13 +10,13 @@ namespace ConsoleUI
     {
         static void Main(string[] args)
         {
-            CustomerManager customerManager1 = new CustomerManager(new EfCustomerDal());
-            customerManager1.Add(new Customer
-            {
+            //CustomerManager customerManager1 = new CustomerManager(new EfCustomerDal());
+            //customerManager1.Add(new Customer
+            //{
 
-                UserId = 4,
-                CompanyName = "D Company"
-            });
+            //    UserId = 4,
+            //    CompanyName = "D Company"
+            //});
             //UserAddTest();
             //CustomerAddTest();
 
@@ -46,16 +46,16 @@ namespace ConsoleUI
             });
         }
 
-        private static void CustomerAddTest()
-        {
-            CustomerManager customerManager = new CustomerManager(new EfCustomerDal());
-            customerManager.Add(new Customer
-            {
+        //private static void CustomerAddTest()
+        //{
+        //    CustomerManager customerManager = new CustomerManager(new EfCustomerDal());
+        //    customerManager.Add(new Customer
+        //    {
 
-                UserId = 5,
-                CompanyName = "C Company"
-            });
-        }
+        //        UserId = 5,
+        //        CompanyName = "C Company"
+        //    });
+        //}
 
         private static void AddTest()
         {
