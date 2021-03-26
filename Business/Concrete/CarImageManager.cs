@@ -1,9 +1,16 @@
 ﻿using Business.Abstract;
+using Business.Constant;
+using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Validation;
+using Core.Utilities.Business;
+using Core.Utilities.FileHelpers;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Business.Concrete
@@ -17,20 +24,39 @@ namespace Business.Concrete
             _carImageDal = carImageDal;
         }
 
-        public IResult Add(CarImage carImage)
+        [ValidationAspect(typeof(CarImageValidator))]
+        public IResult Add(CarImage carImage, IFormFile formFile)
         {
+            IResult result = BusinessRules.Run(CheckCarImageLımıt(carImage.CarId));
+
+            if (result != null)
+            {
+                return result;
+            }
+
+            var result1 = CarImagesFileHelper.Add(formFile);
+            carImage.ImagePath = result1;
+            carImage.Date = DateTime.Now;
+
             _carImageDal.Add(carImage);
             return new SuccessResult("Araba resmi eklendi.");
         }
 
         public IResult Delete(CarImage carImage)
         {
+            IResult result = BusinessRules.Run(CheckForDeleteImage(carImage.Id));
+            if (result != null)
+            {
+                return result;
+            }
+
             _carImageDal.Delete(carImage);
             return new SuccessResult("Araba resmi silindi.");
         }
 
         public IDataResult<List<CarImage>> GetAll()
         {
+            
             return new SuccessDataResult<List<CarImage>>(_carImageDal.GetAll());
         }
 
@@ -39,10 +65,39 @@ namespace Business.Concrete
             return new SuccessDataResult<CarImage>(_carImageDal.Get(c => c.Id == Id));
         }
 
-        public IResult Update(CarImage carImage)
+        public IResult Update(CarImage carImage, IFormFile formFile)
         {
+            IResult result = BusinessRules.Run(CheckCarImageLımıt(carImage.CarId));
+
+            if (result != null)
+            {
+                return result;
+            }
+
+            carImage.Date = DateTime.Now;
             _carImageDal.Update(carImage);
             return new SuccessResult("Araba resmi güncellendi.");
         }
+
+        private IResult CheckCarImageLımıt(int carId)
+        {
+            var result = _carImageDal.GetAll(c => c.CarId == carId).Count;
+            if (result > 5)
+            {
+                return new ErrorResult(Messages.CheckCarImageLımıtError);
+            }
+            return new SuccessResult();
+        }
+
+        private IResult CheckForDeleteImage(int id)
+        {
+            bool result = _carImageDal.GetAll(c => c.Id == id).Any();
+            if (result)
+            {
+                return new ErrorResult(Messages.CheckCarForDeleteImageError);
+            }
+            return new SuccessResult();
+        }
+        
     }
 }
