@@ -34,17 +34,17 @@ namespace ConsoleUI
 
         }
 
-        private static void UserAddTest()
-        {
-            UserManager userManager1 = new UserManager(new EfUserDal());
-            userManager1.Add(new User
-            {
-                FirstName = "Halime",
-                LastName = "Yeşil",
-                Email = "asdfghn58@gmail.com",
-                Password = "asdfghn58"
-            });
-        }
+        //private static void UserAddTest()
+        //{
+        //    UserManager userManager1 = new UserManager(new EfUserDal());
+        //    userManager1.Add(new User
+        //    {
+        //        FirstName = "Halime",
+        //        LastName = "Yeşil",
+        //        Email = "asdfghn58@gmail.com",
+        //        Password = "asdfghn58"
+        //    });
+        //}
 
         //private static void CustomerAddTest()
         //{
