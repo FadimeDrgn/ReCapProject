@@ -9,6 +9,7 @@ using Core.CrossCuttingConcerns.Validation;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
+using Entities.DTOs;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
@@ -39,10 +40,18 @@ namespace Business.Concrete
             return new SuccessResult(Messages.CarAdded);
         }
 
-        [TransactionScopeAspect]
+        //[TransactionScopeAspect]
         public IResult AddTransactionalTest(Car car)
         {
-            throw new NotImplementedException();
+            Add(car);
+
+            if (car.DailyPrice < 50)
+            {
+                throw new Exception("");
+            }
+
+            Add(car);
+            return null;
         }
 
         public IResult Delete(Car car)
@@ -57,16 +66,21 @@ namespace Business.Concrete
             return new DataResult<List<Car>>(_carDal.GetAll(),true,"Ürünler listelendi.");
         }
 
-        [CacheAspect]
-        public IDataResult<List<Car>> GetCarsByBrandId(int id)
+        public IDataResult<List<CarDetailDto>> GetCarDetails()
         {
-            return new SuccessDataResult<List<Car>>(_carDal.GetAll(p => p.BrandId == id));
+            return new SuccessDataResult<List<CarDetailDto>>(_carDal.GetCarDetails(), Messages.CarsListed);
         }
 
         [CacheAspect]
-        public IDataResult<List<Car>> GetCarsByColorId(int id)
+        public IDataResult<List<Car>> GetCarsByBrandId(int brandId)
         {
-            return new SuccessDataResult<List<Car>>(_carDal.GetAll(p => p.ColorId == id));
+            return new SuccessDataResult<List<Car>>(_carDal.GetAll(p => p.BrandId == brandId));
+        }
+
+        [CacheAspect]
+        public IDataResult<List<Car>> GetCarsByColorId(int colorId)
+        {
+            return new SuccessDataResult<List<Car>>(_carDal.GetAll(p => p.ColorId == colorId));
         }
 
         [ValidationAspect(typeof(CarValidator))]

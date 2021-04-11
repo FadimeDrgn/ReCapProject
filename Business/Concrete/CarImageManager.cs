@@ -1,6 +1,7 @@
 ﻿using Business.Abstract;
 using Business.Constant;
 using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.TransactionScopeAspect;
 using Core.Aspects.Autofac.Validation;
 using Core.Utilities.Business;
 using Core.Utilities.FileHelpers;
@@ -56,13 +57,27 @@ namespace Business.Concrete
 
         public IDataResult<List<CarImage>> GetAll()
         {
-            
+
             return new SuccessDataResult<List<CarImage>>(_carImageDal.GetAll());
+        }
+
+        public IDataResult<List<CarImage>> GetByCarId(int carId)
+        {
+            return new SuccessDataResult<List<CarImage>>(CheckIfAnyCarImageExists(carId));
         }
 
         public IDataResult<CarImage> GetById(int Id)
         {
             return new SuccessDataResult<CarImage>(_carImageDal.Get(c => c.Id == Id));
+        }
+
+        [TransactionScopeAspect]
+        public IResult TransactionalOperation(CarImage carImage, IFormFile file)
+        {
+            Add(carImage, file);
+            Update(carImage, file);
+
+            return new SuccessResult(Messages.CarImageUpdated);
         }
 
         public IResult Update(CarImage carImage, IFormFile formFile)
@@ -98,6 +113,19 @@ namespace Business.Concrete
             }
             return new SuccessResult();
         }
-        
+
+        private List<CarImage> CheckIfAnyCarImageExists(int carId)
+        {
+            string path = @"\images\default.jpg";
+            var result = _carImageDal.GetAll(c => c.CarId == carId).Any();
+
+            if (result)
+            {
+                return _carImageDal.GetAll(p => p.CarId == carId);
+            }
+
+            return new List<CarImage> { new CarImage { CarId = carId, ImagePath = path, Date = DateTime.Now } };
+        }
+
     }
 }

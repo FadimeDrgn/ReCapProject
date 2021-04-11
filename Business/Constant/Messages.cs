@@ -8,6 +8,7 @@ namespace Business.Constant
     //static olmasının sebebi newleme gerekmiyor.
     public static class Messages 
     {
+        public static string CarUpdated = "Araba başarıyla güncellendi";
         public static string CarAdded = "Araba eklendi";
         public static string BrandNameInvalid = "Araba açıklaması geçersiz.";
         public static string CarsListed = "Arabalar listelendi.";
@@ -21,5 +22,7 @@ namespace Business.Constant
         public static string SuccessfulLogin = "Başarılı giriş";
         public static string UserAlreadyExists = "Kullanıcı mevcut";
         public static string AccessTokenCreated = "Access token başarıyla oluşturuldu";
+        public static string CarImageUpdated = "Araba resmi başarıyla güncellendi.";
+        public static string RentalListed = "Kiralamalar listelendi.";
     }
 }

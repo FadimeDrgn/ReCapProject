@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Core.Utilities.Results;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,44 +11,67 @@ namespace Core.Utilities.FileHelpers
     {
         public static string Add(IFormFile file)
         {
-            string extension = Path.GetExtension(file.FileName).ToUpper();
-            string newGuıd = CreateGuid() + extension;
-            var directory = Directory.GetCurrentDirectory() + "\\wwwroot";
-            var path = directory + @"\Images";
-            var webpath = "/Images/" + newGuıd;
-            if (!Directory.Exists(path))
+            string sourcePath = Path.GetTempFileName();
+            string destFileNameForDb = CreateNewFilePathForDB(file);
+            string destFileNameForLocalFolder = CreateNewFilePathForLocalFolder(destFileNameForDb);
+
+            if (file.Length > 0)
             {
-                Directory.CreateDirectory(path);
+                using (var stream = new FileStream(sourcePath, FileMode.Create))
+                {
+                    file.CopyTo(stream);
+                }
             }
-            string imagePath;
-            using (FileStream fileStream = File.Create(path + "\\" + newGuıd))
-            {
-                file.CopyTo(fileStream);
-                imagePath = path + "\\" + newGuıd;
-                fileStream.Flush();
-            }
-            return webpath;
-        }
-        public static void Update(IFormFile file, string OldPath)
-        {
-            string extension = Path.GetExtension(file.FileName).ToUpper();
-            using (FileStream fileStream = File.Open(OldPath.Replace("/", "\\"), FileMode.Open))
-            {
-                file.CopyToAsync(fileStream);
-                fileStream.Flush();
-            }
-        }
-        public static void Delete(string ImagePath)
-        {
-            if (File.Exists(ImagePath.Replace("/", "\\")) && Path.GetFileName(ImagePath) != "default.png")
-            {
-                File.Delete(ImagePath.Replace("/", "\\"));
-            }
+
+            File.Move(sourcePath, destFileNameForLocalFolder);
+            return destFileNameForDb;
         }
 
-        private static string CreateGuid()
+        public static IResult Delete(string path)
         {
-            return Guid.NewGuid().ToString("N") + "-" + DateTime.Now.Month + "-" + DateTime.Now.Day + "-" + DateTime.Now.Year;
+            try
+            {
+                File.Delete(path);
+            }
+            catch (Exception exception)
+            {
+                return new ErrorResult(exception.Message);
+            }
+
+            return new SuccessResult();
+        }
+
+        public static string Update(string sourcePath, IFormFile file)
+        {
+            string pathForDb = CreateNewFilePathForDB(file);
+            string pathForFolder = CreateNewFilePathForLocalFolder(pathForDb);
+
+            if (sourcePath.Length > 0)
+            {
+                using (var stream = new FileStream(pathForFolder, FileMode.Create))
+                {
+                    file.CopyTo(stream);
+                }
+            }
+
+            File.Delete(sourcePath);
+            return pathForDb;
+        }
+
+        public static string CreateNewFilePathForDB(IFormFile file)
+        {
+            FileInfo fileInfo = new FileInfo(file.FileName);
+            string fileExtension = fileInfo.Extension;
+            string newPath = Guid.NewGuid().ToString() + fileExtension;
+
+            string result = $@"Images\{newPath}";
+            return result;
+        }
+
+        public static string CreateNewFilePathForLocalFolder(string pathForLocalFolder)
+        {
+            string path = Environment.CurrentDirectory + @"\wwwroot\" + pathForLocalFolder;
+            return path;
         }
     }
 }

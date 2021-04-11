@@ -11,19 +11,19 @@ namespace Core.Aspects.Autofac.TransactionScopeAspect
     {
         public override void Intercept(IInvocation invocation)
         {
-            using (TransactionScope transactionScope = new TransactionScope())
-            {
-                try
-                {
-                    invocation.Proceed();
-                    transactionScope.Complete();
-                }
-                catch (System.Exception e)
-                {
-                    transactionScope.Dispose();
-                    throw;
-                }
-            }
+            //using (TransactionScope transactionScope = new TransactionScope())
+            //{
+            //    try
+            //    {
+            //        invocation.Proceed();
+            //        transactionScope.Complete();
+            //    }
+            //    catch (System.Exception e)
+            //    {
+            //        transactionScope.Dispose();
+            //        throw;
+            //    }
+            //}
         }
     }
 }
